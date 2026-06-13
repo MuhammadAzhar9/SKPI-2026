@@ -202,14 +202,14 @@ CREATE DATABASE order_db OWNER order_user;
 
 ## Checklist
 
-- [ ] PostgreSQL sudah terinstal.
-- [ ] pgAdmin atau `psql` dapat digunakan.
-- [ ] Membuat `catalog_user`.
-- [ ] Membuat `order_user`.
-- [x] Membuat `catalog_db`. (konfigurasi sudah ada di application.properties)
-- [x] Membuat `order_db`. (konfigurasi sudah ada di application.properties)
-- [ ] Memastikan owner `catalog_db` adalah `catalog_user`.
-- [ ] Memastikan owner `order_db` adalah `order_user`.
+- [x] PostgreSQL sudah terinstal.
+- [x] pgAdmin atau `psql` dapat digunakan.
+- [x] Membuat `catalog_user`.
+- [x] Membuat `order_user`.
+- [x] Membuat `catalog_db`.
+- [x] Membuat `order_db`.
+- [x] Memastikan owner `catalog_db` adalah `catalog_user`.
+- [x] Memastikan owner `order_db` adalah `order_user`.
 - [x] Memastikan Catalog Service tidak menggunakan `order_db`.
 - [x] Memastikan Order Service tidak menggunakan `catalog_db`.
 
@@ -278,7 +278,7 @@ catalog.service.base-url=http://localhost:8081
 - [x] Order Service berhasil terkoneksi ke `order_db`. (application.properties terkonfigurasi)
 - [x] Catalog Service berjalan di port `8081`.
 - [x] Order Service berjalan di port `8082`.
-- [ ] Tidak ada error koneksi PostgreSQL. (perlu dijalankan dan dicek)
+- [x] Tidak ada error koneksi PostgreSQL. (HikariPool started pada kedua service — verified)
 - [ ] Password database tidak di-hardcode pada repository final. (gunakan env var sebelum submit)
 
 ## Output Phase 3
