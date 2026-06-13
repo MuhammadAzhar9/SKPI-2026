@@ -1,0 +1,18 @@
+{
+  "info": {
+    "name": "Campus Commerce",
+    "description": "Postman collection untuk Campus Commerce — Catalog Service & Order Service.\nDiisi pada Phase 14 setelah seluruh endpoint selesai.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "catalog_base_url",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "order_base_url",
+      "value": "http://localhost:8082"
+    }
+  ],
+  "item": []
+}
