@@ -15,6 +15,7 @@ import com.campus_commerce.order.model.entity.OrderItem;
 import com.campus_commerce.order.model.enums.OrderStatus;
 import com.campus_commerce.order.repository.OrderRepository;
 import com.campus_commerce.order.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -92,7 +94,10 @@ public class OrderServiceImpl implements OrderService {
         order.setItems(items);
         order.setTotalAmount(totalAmount);
 
-        return OrderResponse.from(orderRepository.save(order));
+        Order saved = orderRepository.save(order);
+        log.info("Order created: id={}, customer={}, totalAmount={}, itemCount={}",
+                saved.getId(), saved.getCustomerName(), saved.getTotalAmount(), saved.getItems().size());
+        return OrderResponse.from(saved);
     }
 
     @Override
@@ -131,6 +136,7 @@ public class OrderServiceImpl implements OrderService {
                     "Only PENDING orders can be paid. Current status: " + order.getStatus());
         }
         order.setStatus(OrderStatus.PAID);
+        log.info("Order paid: id={}", id);
         return OrderResponse.from(orderRepository.save(order));
     }
 
@@ -148,6 +154,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
+        log.info("Order cancelled: id={}, stockRestoredForItems={}", id, order.getItems().size());
         return OrderResponse.from(orderRepository.save(order));
     }
 

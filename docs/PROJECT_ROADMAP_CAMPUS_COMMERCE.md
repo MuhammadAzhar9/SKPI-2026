@@ -1222,16 +1222,16 @@ Mencatat proses penting tanpa menampilkan data sensitif.
 
 ## Checklist
 
-- [ ] Log ketika produk dibuat.
-- [ ] Log ketika order dibuat.
-- [ ] Log ketika stok dikurangi.
-- [ ] Log ketika stok dikembalikan.
-- [ ] Log ketika order dibayar.
-- [ ] Log ketika order dibatalkan.
-- [ ] Log ketika komunikasi HTTP gagal.
-- [ ] Tidak log password.
-- [ ] Tidak log stack trace ke client.
-- [ ] Menggunakan level `INFO`, `WARN`, dan `ERROR` dengan tepat.
+- [x] Log ketika produk dibuat.
+- [x] Log ketika order dibuat.
+- [x] Log ketika stok dikurangi.
+- [x] Log ketika stok dikembalikan.
+- [x] Log ketika order dibayar.
+- [x] Log ketika order dibatalkan.
+- [x] Log ketika komunikasi HTTP gagal.
+- [x] Tidak log password.
+- [x] Tidak log stack trace ke client.
+- [x] Menggunakan level `INFO`, `WARN`, dan `ERROR` dengan tepat.
 
 ## Output Bonus 3
 

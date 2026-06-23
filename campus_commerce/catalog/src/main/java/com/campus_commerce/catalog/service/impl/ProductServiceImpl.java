@@ -14,11 +14,13 @@ import com.campus_commerce.catalog.model.enums.ProductStatus;
 import com.campus_commerce.catalog.model.enums.StockOperation;
 import com.campus_commerce.catalog.repository.ProductRepository;
 import com.campus_commerce.catalog.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -41,7 +43,9 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
 
-        return ProductResponse.from(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        log.info("Product created: id={}, sku={}, name={}", saved.getId(), saved.getSku(), saved.getName());
+        return ProductResponse.from(saved);
     }
 
     @Override
@@ -108,6 +112,7 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setStock(product.getStock() - quantity);
         productRepository.save(product);
+        log.info("Stock reduced: productId={}, quantity={}, remainingStock={}", id, quantity, product.getStock());
     }
 
     @Override
@@ -116,6 +121,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = findById(id);
         product.setStock(product.getStock() + quantity);
         productRepository.save(product);
+        log.info("Stock restored: productId={}, quantity={}, newStock={}", id, quantity, product.getStock());
     }
 
     private Product findById(Long id) {

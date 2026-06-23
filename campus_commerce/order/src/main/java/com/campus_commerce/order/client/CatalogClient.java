@@ -3,6 +3,7 @@ package com.campus_commerce.order.client;
 import com.campus_commerce.order.client.dto.CatalogProductResponse;
 import com.campus_commerce.order.exception.CatalogServiceException;
 import com.campus_commerce.order.exception.CatalogServiceUnavailableException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
+@Slf4j
 @Component
 public class CatalogClient {
 
@@ -32,8 +34,10 @@ public class CatalogClient {
                     })
                     .body(CatalogProductResponse.class);
         } catch (CatalogServiceException e) {
+            log.warn("Catalog error on getProduct productId={}: {}", productId, e.getMessage());
             throw e;
         } catch (Exception e) {
+            log.error("Catalog Service unreachable on getProduct productId={}: {}", productId, e.getMessage());
             throw new CatalogServiceUnavailableException("Catalog Service is unavailable");
         }
     }
@@ -53,8 +57,10 @@ public class CatalogClient {
                     })
                     .toBodilessEntity();
         } catch (CatalogServiceException e) {
+            log.warn("Catalog error on reduceStock productId={}, quantity={}: {}", productId, quantity, e.getMessage());
             throw e;
         } catch (Exception e) {
+            log.error("Catalog Service unreachable on reduceStock productId={}: {}", productId, e.getMessage());
             throw new CatalogServiceUnavailableException("Catalog Service is unavailable");
         }
     }
@@ -71,8 +77,10 @@ public class CatalogClient {
                     })
                     .toBodilessEntity();
         } catch (CatalogServiceException e) {
+            log.warn("Catalog error on restoreStock productId={}, quantity={}: {}", productId, quantity, e.getMessage());
             throw e;
         } catch (Exception e) {
+            log.error("Catalog Service unreachable on restoreStock productId={}: {}", productId, e.getMessage());
             throw new CatalogServiceUnavailableException("Catalog Service is unavailable");
         }
     }
