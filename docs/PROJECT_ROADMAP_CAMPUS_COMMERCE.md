@@ -1386,14 +1386,14 @@ Menyediakan satu pintu masuk untuk kedua service.
 
 ## Checklist
 
-- [ ] Membuat project API Gateway.
-- [ ] Menambahkan Spring Cloud Gateway.
-- [ ] Membuat route Catalog Service.
-- [ ] Membuat route Order Service.
-- [ ] Menambahkan CORS jika diperlukan.
-- [ ] Menambahkan logging request.
-- [ ] Memastikan komunikasi antarservice tetap berjalan.
-- [ ] Mendokumentasikan alasan penggunaan gateway.
+- [x] Membuat project API Gateway.
+- [x] Menambahkan Spring Cloud Gateway.
+- [x] Membuat route Catalog Service.
+- [x] Membuat route Order Service.
+- [x] Menambahkan CORS jika diperlukan.
+- [x] Menambahkan logging request.
+- [x] Memastikan komunikasi antarservice tetap berjalan.
+- [x] Mendokumentasikan alasan penggunaan gateway.
 
 ## Output Bonus 8
 

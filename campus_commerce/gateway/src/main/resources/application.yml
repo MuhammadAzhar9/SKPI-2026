@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: catalog-service
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/products/**
+        - id: order-service
+          uri: ${ORDER_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/orders/**
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    reactor.netty.http.client: INFO
