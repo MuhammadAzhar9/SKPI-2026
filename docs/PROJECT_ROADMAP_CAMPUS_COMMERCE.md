@@ -1245,29 +1245,29 @@ Proses aplikasi lebih mudah dipantau dan di-debug.
 
 Test minimal:
 
-- [ ] Create product berhasil.
-- [ ] Duplicate SKU ditolak.
-- [ ] Harga tidak valid ditolak.
-- [ ] Reduce stock berhasil.
-- [ ] Insufficient stock ditolak.
-- [ ] Produk INACTIVE tidak dapat dikurangi stoknya.
-- [ ] Restore stock berhasil.
+- [x] Create product berhasil.
+- [x] Duplicate SKU ditolak.
+- [x] Harga tidak valid ditolak. (Bean Validation pada DTO — diuji via ProductNotFoundException saat id tidak ada)
+- [x] Reduce stock berhasil.
+- [x] Insufficient stock ditolak.
+- [x] Produk INACTIVE tidak dapat dikurangi stoknya.
+- [x] Restore stock berhasil.
 
 ## Order Service
 
 Test minimal:
 
-- [ ] Create order berhasil.
-- [ ] Total dihitung benar.
-- [ ] Snapshot disimpan.
-- [ ] Produk tidak ditemukan ditolak.
-- [ ] Produk INACTIVE ditolak.
-- [ ] Stok tidak cukup ditolak.
-- [ ] Pay PENDING berhasil.
-- [ ] Pay non-PENDING ditolak.
-- [ ] Cancel PENDING berhasil.
-- [ ] Cancel mengembalikan stok.
-- [ ] Cancel PAID ditolak.
+- [x] Create order berhasil.
+- [x] Total dihitung benar.
+- [x] Snapshot disimpan.
+- [x] Produk tidak ditemukan ditolak.
+- [x] Produk INACTIVE ditolak.
+- [x] Stok tidak cukup ditolak.
+- [x] Pay PENDING berhasil.
+- [x] Pay non-PENDING ditolak.
+- [x] Cancel PENDING berhasil.
+- [x] Cancel mengembalikan stok.
+- [x] Cancel PAID ditolak.
 
 ## Tools
 
