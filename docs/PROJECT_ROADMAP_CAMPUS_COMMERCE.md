@@ -1320,16 +1320,16 @@ order-db
 
 ## Checklist
 
-- [ ] Dockerfile Catalog Service.
-- [ ] Dockerfile Order Service.
-- [ ] PostgreSQL container untuk Catalog.
-- [ ] PostgreSQL container untuk Order.
-- [ ] Volume database.
-- [ ] Environment variable database.
-- [ ] Network antarservice.
-- [ ] Order Service memanggil `http://catalog-service:8081`.
-- [ ] Health check jika memungkinkan.
-- [ ] Sistem berjalan dengan:
+- [x] Dockerfile Catalog Service.
+- [x] Dockerfile Order Service.
+- [x] PostgreSQL container untuk Catalog.
+- [x] PostgreSQL container untuk Order.
+- [x] Volume database.
+- [x] Environment variable database.
+- [x] Network antarservice.
+- [x] Order Service memanggil `http://catalog-service:8081`.
+- [x] Health check jika memungkinkan.
+- [x] Sistem berjalan dengan:
 
 ```bash
 docker compose up --build

@@ -1,0 +1,88 @@
+services:
+
+  catalog-db:
+    image: postgres:16-alpine
+    container_name: catalog-db
+    environment:
+      POSTGRES_DB: catalog_db
+      POSTGRES_USER: catalog_user
+      POSTGRES_PASSWORD: Catalog123!
+    volumes:
+      - catalog-db-data:/var/lib/postgresql/data
+    networks:
+      - campus-commerce-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog_user -d catalog_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  order-db:
+    image: postgres:16-alpine
+    container_name: order-db
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: Order123!
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    networks:
+      - campus-commerce-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order_user -d order_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  catalog-service:
+    build:
+      context: ./campus_commerce/catalog
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    environment:
+      CATALOG_DB_HOST: catalog-db
+      CATALOG_DB_USERNAME: catalog_user
+      CATALOG_DB_PASSWORD: Catalog123!
+    ports:
+      - "8081:8081"
+    networks:
+      - campus-commerce-net
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/api/products > /dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: on-failure
+
+  order-service:
+    build:
+      context: ./campus_commerce/order
+      dockerfile: Dockerfile
+    container_name: order-service
+    environment:
+      ORDER_DB_HOST: order-db
+      ORDER_DB_USERNAME: order_user
+      ORDER_DB_PASSWORD: Order123!
+      CATALOG_SERVICE_URL: http://catalog-service:8081
+    ports:
+      - "8082:8082"
+    networks:
+      - campus-commerce-net
+    depends_on:
+      order-db:
+        condition: service_healthy
+      catalog-service:
+        condition: service_healthy
+    restart: on-failure
+
+networks:
+  campus-commerce-net:
+    driver: bridge
+
+volumes:
+  catalog-db-data:
+  order-db-data:
