@@ -1288,13 +1288,13 @@ Menguji controller, service, repository, dan database secara terintegrasi.
 
 ## Checklist
 
-- [ ] Integration test Catalog API.
-- [ ] Integration test Order API.
-- [ ] Test validasi request.
-- [ ] Test mapping response.
-- [ ] Test status HTTP.
-- [ ] Test database persistence.
-- [ ] Menggunakan database test terpisah.
+- [x] Integration test Catalog API.
+- [x] Integration test Order API.
+- [x] Test validasi request.
+- [x] Test mapping response.
+- [x] Test status HTTP.
+- [x] Test database persistence.
+- [x] Menggunakan database test terpisah. (H2 in-memory, terpisah dari catalog_db dan order_db)
 - [ ] Opsional menggunakan Testcontainers PostgreSQL.
 
 ## Output Bonus 5
