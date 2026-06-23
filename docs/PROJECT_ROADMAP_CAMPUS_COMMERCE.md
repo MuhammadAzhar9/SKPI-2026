@@ -1357,11 +1357,11 @@ Idempotency-Key: unique-request-key
 
 ## Checklist
 
-- [ ] Menambahkan idempotency key pada create order.
-- [ ] Menyimpan key yang sudah diproses.
-- [ ] Request dengan key sama tidak membuat order baru.
-- [ ] Response lama dapat dikembalikan.
-- [ ] Dokumentasi trade-off disediakan.
+- [x] Menambahkan idempotency key pada create order.
+- [x] Menyimpan key yang sudah diproses.
+- [x] Request dengan key sama tidak membuat order baru.
+- [x] Response lama dapat dikembalikan.
+- [x] Dokumentasi trade-off disediakan. (docs/IDEMPOTENCY.md)
 
 ## Output Bonus 7
 

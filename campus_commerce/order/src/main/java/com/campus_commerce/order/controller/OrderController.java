@@ -4,6 +4,7 @@ import com.campus_commerce.order.dto.request.CreateOrderRequest;
 import com.campus_commerce.order.dto.response.OrderResponse;
 import com.campus_commerce.order.dto.response.PagedResponse;
 import com.campus_commerce.order.model.enums.OrderStatus;
+import com.campus_commerce.order.service.IdempotencyService;
 import com.campus_commerce.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,26 +20,51 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/orders")
 @Tag(name = "Orders", description = "Manajemen order — buat, bayar, dan batalkan order")
 public class OrderController {
 
     private final OrderService orderService;
+    private final IdempotencyService idempotencyService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, IdempotencyService idempotencyService) {
         this.orderService = orderService;
+        this.idempotencyService = idempotencyService;
     }
 
     @PostMapping
-    @Operation(summary = "Buat order baru", description = "Membuat order baru dengan status PENDING. Stok produk berkurang otomatis.")
+    @Operation(
+        summary = "Buat order baru",
+        description = "Membuat order baru dengan status PENDING. Stok produk berkurang otomatis. " +
+                      "Kirim header `Idempotency-Key: <unique-key>` untuk mencegah order duplikat pada retry."
+    )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Order berhasil dibuat"),
+        @ApiResponse(responseCode = "201", description = "Order berhasil dibuat atau dikembalikan dari cache"),
         @ApiResponse(responseCode = "400", description = "Validasi gagal, produk INACTIVE, atau stok tidak cukup"),
         @ApiResponse(responseCode = "503", description = "Catalog Service tidak tersedia")
     })
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
+    public ResponseEntity<OrderResponse> createOrder(
+            @Valid @RequestBody CreateOrderRequest request,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
+
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            Optional<Long> existingOrderId = idempotencyService.findOrderId(idempotencyKey);
+            if (existingOrderId.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(orderService.getOrderById(existingOrderId.get()));
+            }
+        }
+
+        OrderResponse response = orderService.createOrder(request);
+
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyService.save(idempotencyKey, response.getId());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping

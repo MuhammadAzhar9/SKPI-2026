@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS order_items (
     CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders (id)
 );
 
+CREATE TABLE IF NOT EXISTS idempotency_records (
+    id              BIGSERIAL       PRIMARY KEY,
+    idempotency_key VARCHAR(255)    NOT NULL,
+    order_id        BIGINT          NOT NULL,
+    created_at      TIMESTAMP       NOT NULL,
+    CONSTRAINT uk_idempotency_key UNIQUE (idempotency_key),
+    CONSTRAINT fk_idempotency_order FOREIGN KEY (order_id) REFERENCES orders (id)
+);
+
 -- IMPORTANT: order_items.product_id is intentionally NOT a foreign key to catalog_db.
 -- Product data (name, price) is stored as a snapshot at the time the order is created.
 -- Order Service must NOT query catalog_db directly.
