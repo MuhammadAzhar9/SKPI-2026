@@ -1520,56 +1520,56 @@ Catatan:
 
 ## Fitur wajib
 
-- [ ] Dua Spring Boot service berjalan.
-- [ ] Dua PostgreSQL database terpisah.
-- [ ] CRUD/endpoint Catalog sesuai ketentuan.
-- [ ] Endpoint Order sesuai ketentuan.
-- [ ] Order Service memanggil Catalog Service via HTTP.
-- [ ] Tidak ada akses database lintas service.
-- [ ] Create order mengurangi stok.
-- [ ] Cancel order mengembalikan stok.
-- [ ] Hanya PENDING dapat dibayar.
-- [ ] Hanya PENDING dapat dibatalkan.
-- [ ] Snapshot nama dan harga tersimpan.
-- [ ] Validasi request lengkap.
-- [ ] Error response konsisten.
-- [ ] Tidak ada stack trace pada response.
+- [x] Dua Spring Boot service berjalan.
+- [x] Dua PostgreSQL database terpisah.
+- [x] CRUD/endpoint Catalog sesuai ketentuan.
+- [x] Endpoint Order sesuai ketentuan.
+- [x] Order Service memanggil Catalog Service via HTTP.
+- [x] Tidak ada akses database lintas service.
+- [x] Create order mengurangi stok.
+- [x] Cancel order mengembalikan stok.
+- [x] Hanya PENDING dapat dibayar.
+- [x] Hanya PENDING dapat dibatalkan.
+- [x] Snapshot nama dan harga tersimpan.
+- [x] Validasi request lengkap.
+- [x] Error response konsisten.
+- [x] Tidak ada stack trace pada response.
 
 ## Dokumentasi wajib
 
 - [x] `README.md`.
 - [x] `AI_USAGE.md`.
-- [ ] Postman Collection.
-- [ ] PDM/ERD.
+- [x] Postman Collection.
+- [ ] PDM/ERD. (buat manual di dbdiagram.io)
 - [x] DDL Catalog.
 - [x] DDL Order.
-- [ ] Cara menjalankan project.
-- [ ] Daftar endpoint.
-- [ ] Business rules.
-- [ ] Bukti komunikasi HTTP.
+- [x] Cara menjalankan project.
+- [x] Daftar endpoint.
+- [x] Business rules.
+- [x] Bukti komunikasi HTTP.
 
 ## Kualitas kode
 
-- [ ] Struktur package rapi.
-- [ ] Controller, service, repository, dan DTO terpisah.
-- [ ] Tidak mengembalikan entity langsung.
-- [ ] Menggunakan `BigDecimal`.
-- [ ] Menggunakan enum.
-- [ ] Constructor injection.
-- [ ] Tidak ada secret dalam Git.
-- [ ] Nama variabel dan method jelas.
-- [ ] Kode dapat dijelaskan saat presentasi.
+- [x] Struktur package rapi.
+- [x] Controller, service, repository, dan DTO terpisah.
+- [x] Tidak mengembalikan entity langsung.
+- [x] Menggunakan `BigDecimal`.
+- [x] Menggunakan enum.
+- [x] Constructor injection.
+- [x] Tidak ada secret dalam Git.
+- [x] Nama variabel dan method jelas.
+- [ ] Kode dapat dijelaskan saat presentasi. (persiapan mandiri)
 
 ## Bonus
 
-- [ ] Pagination/search/filter.
-- [ ] Swagger/OpenAPI.
-- [ ] Logging.
-- [ ] Unit test.
-- [ ] Integration test.
-- [ ] Docker Compose.
-- [ ] Idempotency.
-- [ ] API Gateway.
+- [x] Pagination/search/filter.
+- [x] Swagger/OpenAPI.
+- [x] Logging.
+- [x] Unit test.
+- [x] Integration test.
+- [x] Docker Compose.
+- [x] Idempotency.
+- [x] API Gateway.
 
 ## Tidak wajib
 

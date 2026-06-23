@@ -147,6 +147,238 @@ Saya memahami bahwa pada sistem terdistribusi, urutan operasi sangat penting. De
 
 ---
 
+---
+
+## Prompt 6
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Menambahkan pagination dan filter pada endpoint GET /api/products dan GET /api/orders
+
+### Prompt
+```
+Bagaimana cara menambahkan pagination dan filter berdasarkan nama dan status pada endpoint Spring Boot yang sudah ada? Saya menggunakan Spring Data JPA dan ingin response-nya menggunakan format yang konsisten dengan field content, page, size, totalElements, dan totalPages.
+```
+
+### Hasil yang Digunakan
+- Penggunaan `Pageable` dari Spring Data JPA di parameter controller
+- `@ParameterObject` dari Springdoc agar parameter pagination muncul di Swagger
+- `Page<T>` dari repository dan mapping ke custom `PagedResponse<T>`
+- `@PageableDefault(size = 10)` sebagai nilai default
+- Query JPQL dengan `LOWER(p.name) LIKE LOWER(:name)` untuk case-insensitive search
+
+### Modifikasi
+- Menambahkan method `findByFilters` di repository menggunakan `@Query` kustom
+- Membuat class `PagedResponse<T>` sebagai wrapper generic untuk semua list response
+
+### Pemahaman
+Saya memahami bahwa `Pageable` di Spring Data JPA secara otomatis membaca parameter `page`, `size`, dan `sort` dari query string. `Page<T>` yang dikembalikan repository berisi metadata pagination yang bisa langsung digunakan. Custom `PagedResponse<T>` diperlukan karena `Page<T>` dari Spring tidak bisa langsung diserialisasi dengan format yang diinginkan.
+
+---
+
+## Prompt 7
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Mengintegrasikan Swagger UI menggunakan Springdoc OpenAPI
+
+### Prompt
+```
+Bagaimana cara menambahkan dokumentasi Swagger UI di Spring Boot 3 menggunakan Springdoc OpenAPI? Saya ingin endpoint terdokumentasi dengan deskripsi, contoh request, dan kode respons yang mungkin.
+```
+
+### Hasil yang Digunakan
+- Dependency `springdoc-openapi-starter-webmvc-ui` versi 2.8.9
+- Anotasi `@Operation`, `@ApiResponse`, `@Tag` untuk dokumentasi controller
+- `@Schema(description = "...")` pada field DTO untuk deskripsi field
+- Konfigurasi `OpenAPI` bean dengan info title, version, dan description
+
+### Modifikasi
+- Memisahkan `@Operation` dengan `summary` dan `description` agar lebih informatif
+- Menambahkan `@ApiResponse` untuk kode 201, 400, 404, 409, dan 503
+
+### Pemahaman
+Saya memahami bahwa Springdoc OpenAPI membaca anotasi Spring MVC secara otomatis dan menghasilkan dokumentasi tanpa banyak konfigurasi tambahan. `@ParameterObject` diperlukan khusus untuk parameter `Pageable` agar muncul sebagai query parameter individual, bukan satu objek.
+
+---
+
+## Prompt 8
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Menambahkan structured logging menggunakan SLF4J + Logback
+
+### Prompt
+```
+Bagaimana cara menambahkan logging yang baik di Spring Boot? Saya ingin log INFO untuk operasi bisnis normal, WARN untuk error yang dapat diantisipasi, dan ERROR untuk exception yang tidak terduga.
+```
+
+### Hasil yang Digunakan
+- `@Slf4j` dari Lombok sebagai shortcut deklarasi logger
+- `log.info(...)` pada service setelah operasi berhasil (product created, order created, dll.)
+- `log.warn(...)` di CatalogClient saat Catalog Service mengembalikan error 4xx
+- `log.error(...)` di GlobalExceptionHandler untuk exception tak terduga dengan stack trace ke log (bukan ke response)
+
+### Modifikasi
+- Menambahkan parameter structured (id, sku, quantity) pada pesan log agar mudah di-parse
+- Memisahkan log di GlobalExceptionHandler antara WARN (client error) dan ERROR (server error)
+
+### Pemahaman
+Saya memahami pentingnya structured logging: parameter di-embed di pesan log (bukan di-string-concatenate) menggunakan placeholder `{}`. Ini lebih efisien karena string hanya dibuild jika log level aktif. Stack trace hanya ditulis ke log server, tidak pernah ke response API.
+
+---
+
+## Prompt 9
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Membuat unit test menggunakan JUnit 5 dan Mockito
+
+### Prompt
+```
+Bagaimana cara membuat unit test untuk Spring Boot service menggunakan JUnit 5 dan Mockito? Saya ingin test yang tidak memerlukan Spring context agar cepat dijalankan.
+```
+
+### Hasil yang Digunakan
+- `@ExtendWith(MockitoExtension.class)` sebagai pengganti `@SpringBootTest` untuk unit test
+- `@Mock` untuk membuat mock dependency (repository, client)
+- `@InjectMocks` untuk inject mock ke class yang ditest
+- `assertThrows(ExceptionClass.class, () -> ...)` untuk test exception
+- `when(...).thenReturn(...)` dan `verify(...)` dari Mockito
+
+### Modifikasi
+- Memisahkan test per skenario (success + berbagai failure case) agar mudah dibaca
+- Menggunakan nama method test yang deskriptif: `createProduct_duplicateSku_throwsException`
+
+### Pemahaman
+Saya memahami perbedaan unit test (tanpa Spring context, semua dependency di-mock) dan integration test (dengan Spring context). Unit test lebih cepat dan fokus pada logika bisnis. `@InjectMocks` menggunakan constructor injection jika tersedia, sehingga kompatibel dengan pola constructor injection yang sudah digunakan.
+
+---
+
+## Prompt 10
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Membuat integration test menggunakan MockMvc dan H2 in-memory database
+
+### Prompt
+```
+Bagaimana cara membuat integration test di Spring Boot yang menggunakan H2 sebagai pengganti PostgreSQL? Saya ingin test yang menyimulasikan request HTTP nyata tanpa perlu server eksternal.
+```
+
+### Hasil yang Digunakan
+- `@SpringBootTest` + `@AutoConfigureMockMvc` untuk test dengan full Spring context
+- `@TestPropertySource(properties = {...})` untuk override datasource ke H2 in-memory
+- `@Transactional` pada test class agar setiap test auto-rollback setelah selesai
+- `@MockBean CatalogClient` di Order integration test agar tidak perlu Catalog Service aktif
+- `MockMvc.perform(post(...).contentType(JSON).content(body)).andExpect(status().isCreated())`
+
+### Modifikasi
+- Menggunakan `DB_CLOSE_DELAY=-1` pada URL H2 agar koneksi tidak ditutup di tengah test
+- Membuat helper method `createProduct()` dan `createOrder()` untuk mengurangi duplikasi setup
+
+### Pemahaman
+Saya memahami bahwa dengan `@Transactional` di test class, setiap test method berjalan dalam transaction yang di-rollback setelah selesai — sehingga test tidak saling mempengaruhi. `@MockBean` menggantikan bean nyata di Spring context, memungkinkan test Order Service tanpa Catalog Service aktif.
+
+---
+
+## Prompt 11
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Membuat Dockerfile dan Docker Compose untuk seluruh sistem
+
+### Prompt
+```
+Bagaimana cara membuat Dockerfile untuk aplikasi Spring Boot menggunakan multi-stage build? Dan bagaimana cara mengorkestrasi dua service Spring Boot dengan dua PostgreSQL menggunakan Docker Compose termasuk health check?
+```
+
+### Hasil yang Digunakan
+- Multi-stage Dockerfile: stage `build` menggunakan `maven:3.9-eclipse-temurin-17`, stage akhir menggunakan `eclipse-temurin:17-jre-alpine` (lebih kecil)
+- `COPY pom.xml . && RUN mvn dependency:go-offline` sebelum `COPY src` untuk cache dependency layer
+- `depends_on` dengan `condition: service_healthy` agar service tidak start sebelum DB siap
+- Health check PostgreSQL dengan `pg_isready`
+- Health check Spring Boot dengan `wget -qO- http://localhost:808x/api/...`
+- `restart: on-failure` agar container restart jika crash
+
+### Modifikasi
+- Menambahkan `start_period: 40s` pada health check service untuk memberi waktu Spring Boot startup
+- Menggunakan named volumes agar data PostgreSQL persisten antar restart
+
+### Pemahaman
+Saya memahami pentingnya urutan startup dalam Docker Compose. `depends_on` dengan `service_healthy` memastikan PostgreSQL benar-benar siap menerima koneksi sebelum Spring Boot mencoba connect. Multi-stage build memisahkan build tools dari runtime image, menghasilkan image yang lebih kecil dan lebih aman.
+
+---
+
+## Prompt 12
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Mengimplementasikan idempotency pada endpoint create order
+
+### Prompt
+```
+Bagaimana cara mengimplementasikan idempotency pada endpoint POST /api/orders di Spring Boot? Saya ingin menggunakan header Idempotency-Key dan menyimpan mapping key ke orderId di database.
+```
+
+### Hasil yang Digunakan
+- Entity `IdempotencyRecord` dengan field `idempotencyKey` (unique) dan `orderId`
+- `IdempotencyService` interface dengan method `findOrderId(key)` dan `save(key, orderId)`
+- Cek di controller: jika key sudah ada → ambil order dari DB dan return 200, jika belum → buat order baru lalu save key
+- `@RequestHeader(required = false)` agar endpoint tetap berfungsi tanpa header
+
+### Modifikasi
+- Menyimpan hanya `orderId` (bukan full response JSON) untuk menghindari masalah deserialisasi dengan `@Builder`
+- Menggunakan `@Transactional` pada `save()` dan `@Transactional(readOnly=true)` pada `findOrderId()`
+
+### Pemahaman
+Saya memahami bahwa idempotency penting untuk mencegah duplikasi akibat retry dari client (network timeout, dsb). Menyimpan response JSON secara utuh sulit karena deserialisasi JSON ke class dengan `@Builder` Lombok membutuhkan konfigurasi tambahan. Alternatif yang lebih sederhana: simpan hanya ID, lalu query ulang saat dibutuhkan.
+
+---
+
+## Prompt 13
+
+### Tanggal
+23 Juni 2026
+
+### Tujuan
+Membuat API Gateway menggunakan Spring Cloud Gateway
+
+### Prompt
+```
+Bagaimana cara membuat API Gateway di Spring Boot menggunakan Spring Cloud Gateway? Saya ingin routing dari satu port ke dua service yang berbeda, dengan CORS dan logging request.
+```
+
+### Hasil yang Digunakan
+- `spring-cloud-starter-gateway` dengan BOM `spring-cloud-dependencies 2024.0.0`
+- Routing via `application.yml`: path predicate `/api/products/**` → Catalog Service, `/api/orders/**` → Order Service
+- `CorsWebFilter` menggunakan `org.springframework.web.cors.reactive.*` (bukan servlet CORS)
+- `GlobalFilter` + `Ordered` untuk logging method + path + status setiap request
+
+### Modifikasi
+- Menggunakan `setAllowedOriginPatterns(List.of("*"))` bukan `setAllowedOrigins` karena lebih fleksibel
+- Menambahkan `ExposedHeaders` untuk `Idempotency-Key` agar dapat dibaca client
+- URL upstream dikonfigurasi via environment variable agar dapat diganti saat deploy
+
+### Pemahaman
+Saya memahami bahwa Spring Cloud Gateway berbasis WebFlux (reactive, non-blocking), sehingga menggunakan `CorsWebFilter` dari package reactive, bukan `CorsFilter` dari package servlet. `GlobalFilter` memungkinkan intercept semua request/response tanpa perlu annotasi di setiap route.
+
+---
+
 ## Bagian yang Sudah Dipahami
 
 - Perbedaan Entity dan DTO, serta mengapa entity tidak boleh dikembalikan dari controller
@@ -156,9 +388,16 @@ Saya memahami bahwa pada sistem terdistribusi, urutan operasi sangat penting. De
 - Alur create order: validasi → kurangi stok → simpan snapshot → hitung total
 - Alur cancel order: cek status PENDING → kembalikan stok tiap item → ubah status CANCELLED
 - Kenapa `productId` di order_items bukan foreign key ke catalog_db
+- Pagination dengan `Pageable` dan custom `PagedResponse<T>`
+- Dokumentasi API dengan Springdoc OpenAPI dan Swagger UI
+- Structured logging dengan SLF4J: INFO/WARN/ERROR sesuai severity
+- Unit test tanpa Spring context menggunakan `@ExtendWith(MockitoExtension.class)`
+- Integration test dengan H2 in-memory dan `@MockBean` untuk dependency eksternal
+- Multi-stage Docker build dan orkestrasi dengan Docker Compose + health checks
+- Idempotency via header HTTP: simpan key→id di database, check sebelum proses
+- API Gateway dengan Spring Cloud Gateway: routing, CORS reaktif, global logging filter
 
 ## Bagian yang Masih Perlu Dipelajari
 
-- Penanganan race condition pada pengurangan stok secara concurrent (perlu Saga Pattern atau Optimistic Locking)
-- Unit testing dengan Mockito untuk layer service
-- Docker Compose untuk menjalankan seluruh sistem dalam container
+- Penanganan race condition pada pengurangan stok secara concurrent (Saga Pattern atau Optimistic Locking)
+- Distributed tracing untuk melacak request yang melewati multiple service (Zipkin/OpenTelemetry)
