@@ -279,7 +279,7 @@ catalog.service.base-url=http://localhost:8081
 - [x] Catalog Service berjalan di port `8081`.
 - [x] Order Service berjalan di port `8082`.
 - [x] Tidak ada error koneksi PostgreSQL. (HikariPool started pada kedua service — verified)
-- [ ] Password database tidak di-hardcode pada repository final. (gunakan env var sebelum submit)
+- [x] Password database tidak di-hardcode pada repository final. (gunakan env var sebelum submit)
 
 ## Output Phase 3
 
@@ -363,15 +363,15 @@ Optional<Product> findBySku(String sku);
 
 Minimal:
 
-- [ ] `CreateProductRequest`
-- [ ] `UpdateStockRequest`
-- [ ] `UpdateProductStatusRequest`
+- [x] `CreateProductRequest`
+- [x] `UpdateStockRequest`
+- [x] `UpdateProductStatusRequest`
 
 ## 4.6 Membuat DTO response
 
 Minimal:
 
-- [ ] `ProductResponse`
+- [x] `ProductResponse`
 
 ## 4.7 Membuat service
 
@@ -408,15 +408,15 @@ Endpoint internal tambahan untuk komunikasi Order Service:
 
 ## 4.9 Business rules Catalog Service
 
-- [ ] SKU wajib unik.
-- [ ] Nama produk wajib diisi.
-- [ ] Harga harus lebih dari nol.
-- [ ] Stok minimal nol.
-- [ ] Status hanya `ACTIVE` atau `INACTIVE`.
-- [ ] Status default saat create adalah `ACTIVE`.
-- [ ] Produk `INACTIVE` tidak boleh dipesan.
-- [ ] Stok tidak boleh menjadi negatif.
-- [ ] Produk yang tidak ditemukan menghasilkan response `404`.
+- [x] SKU wajib unik.
+- [x] Nama produk wajib diisi.
+- [x] Harga harus lebih dari nol.
+- [x] Stok minimal nol.
+- [x] Status hanya `ACTIVE` atau `INACTIVE`.
+- [x] Status default saat create adalah `ACTIVE`.
+- [x] Produk `INACTIVE` tidak boleh dipesan. (ditangani Order Service — Phase 7)
+- [x] Stok tidak boleh menjadi negatif.
+- [x] Produk yang tidak ditemukan menghasilkan response `404`.
 
 ## 4.10 Testing manual Catalog Service
 
@@ -529,31 +529,31 @@ Nama dan harga tidak boleh selalu diambil ulang dari Catalog Service saat order 
 
 ## 5.5 Membuat repository
 
-- [ ] `OrderRepository`
-- [ ] `OrderItemRepository` jika diperlukan.
+- [x] `OrderRepository`
+- [x] `OrderItemRepository` jika diperlukan.
 
 ## 5.6 Membuat DTO request
 
 Minimal:
 
-- [ ] `CreateOrderRequest`
-- [ ] `CreateOrderItemRequest`
+- [x] `CreateOrderRequest`
+- [x] `CreateOrderItemRequest`
 
 ## 5.7 Membuat DTO response
 
 Minimal:
 
-- [ ] `OrderResponse`
-- [ ] `OrderItemResponse`
+- [x] `OrderResponse`
+- [x] `OrderItemResponse`
 
 ## 5.8 Validasi request order
 
-- [ ] Customer name wajib diisi.
-- [ ] Email wajib diisi.
-- [ ] Email harus valid.
-- [ ] Items minimal satu.
-- [ ] Product ID wajib diisi.
-- [ ] Quantity minimal satu.
+- [x] Customer name wajib diisi.
+- [x] Email wajib diisi.
+- [x] Email harus valid.
+- [x] Items minimal satu.
+- [x] Product ID wajib diisi.
+- [x] Quantity minimal satu.
 
 ## Output Phase 5
 
@@ -593,11 +593,11 @@ restoreStock(productId, quantity)
 
 ## Checklist
 
-- [ ] Base URL Catalog Service berasal dari konfigurasi.
-- [ ] Order Service tidak menggunakan repository Catalog.
-- [ ] Order Service tidak menggunakan koneksi `catalog_db`.
-- [ ] Product response dari Catalog Service dipetakan ke DTO client.
-- [ ] Error dari Catalog Service diterjemahkan menjadi error Order Service yang jelas.
+- [x] Base URL Catalog Service berasal dari konfigurasi.
+- [x] Order Service tidak menggunakan repository Catalog.
+- [x] Order Service tidak menggunakan koneksi `catalog_db`.
+- [x] Product response dari Catalog Service dipetakan ke DTO client.
+- [x] Error dari Catalog Service diterjemahkan menjadi error Order Service yang jelas.
 - [ ] Timeout HTTP dikonfigurasi jika memungkinkan.
 
 ## Output Phase 6
@@ -650,19 +650,19 @@ Simpan order dengan status PENDING
 
 ## Business rules
 
-- [ ] Customer name wajib.
-- [ ] Email harus valid.
-- [ ] Items minimal satu.
-- [ ] Quantity minimal satu.
-- [ ] Produk harus ditemukan.
-- [ ] Produk harus `ACTIVE`.
-- [ ] Stok harus cukup.
-- [ ] Harga diambil dari Catalog Service, bukan request client.
-- [ ] Nama produk diambil dari Catalog Service.
-- [ ] Stok berkurang saat order berhasil dibuat.
-- [ ] Order baru berstatus `PENDING`.
-- [ ] Total dihitung oleh backend.
-- [ ] Data produk disimpan sebagai snapshot.
+- [x] Customer name wajib.
+- [x] Email harus valid.
+- [x] Items minimal satu.
+- [x] Quantity minimal satu.
+- [x] Produk harus ditemukan.
+- [x] Produk harus `ACTIVE`.
+- [x] Stok harus cukup.
+- [x] Harga diambil dari Catalog Service, bukan request client.
+- [x] Nama produk diambil dari Catalog Service.
+- [x] Stok berkurang saat order berhasil dibuat.
+- [x] Order baru berstatus `PENDING`.
+- [x] Total dihitung oleh backend.
+- [x] Data produk disimpan sebagai snapshot.
 
 ## Endpoint
 
@@ -702,13 +702,13 @@ Create order bekerja dan stok berkurang.
 
 ## Checklist
 
-- [ ] Daftar order menampilkan status.
-- [ ] Daftar order menampilkan total.
-- [ ] Detail order menampilkan customer.
-- [ ] Detail order menampilkan seluruh item.
-- [ ] Detail order menggunakan snapshot produk.
-- [ ] Order tidak ditemukan menghasilkan `404`.
-- [ ] Entity tidak dikembalikan langsung dari controller.
+- [x] Daftar order menampilkan status.
+- [x] Daftar order menampilkan total.
+- [x] Detail order menampilkan customer.
+- [x] Detail order menampilkan seluruh item.
+- [x] Detail order menggunakan snapshot produk.
+- [x] Order tidak ditemukan menghasilkan `404`.
+- [x] Entity tidak dikembalikan langsung dari controller.
 
 ## Output Phase 8
 
@@ -726,12 +726,12 @@ PATCH /api/orders/{id}/pay
 
 ## Business rules
 
-- [ ] Hanya order `PENDING` yang dapat dibayar.
-- [ ] Status berubah dari `PENDING` menjadi `PAID`.
-- [ ] Order `PAID` tidak dapat dibayar ulang.
-- [ ] Order `CANCELLED` tidak dapat dibayar.
-- [ ] Pembayaran tidak mengubah stok.
-- [ ] Order tidak ditemukan menghasilkan `404`.
+- [x] Hanya order `PENDING` yang dapat dibayar.
+- [x] Status berubah dari `PENDING` menjadi `PAID`.
+- [x] Order `PAID` tidak dapat dibayar ulang.
+- [x] Order `CANCELLED` tidak dapat dibayar.
+- [x] Pembayaran tidak mengubah stok.
+- [x] Order tidak ditemukan menghasilkan `404`.
 
 ## Status transition
 
@@ -773,13 +773,13 @@ Ubah status menjadi CANCELLED
 
 ## Business rules
 
-- [ ] Hanya order `PENDING` yang dapat dibatalkan.
-- [ ] Stok dikembalikan saat cancel.
-- [ ] Semua item dikembalikan sesuai quantity.
-- [ ] Status berubah menjadi `CANCELLED`.
-- [ ] Order `PAID` tidak dapat dibatalkan.
-- [ ] Order `CANCELLED` tidak dapat dibatalkan ulang.
-- [ ] Order tidak ditemukan menghasilkan `404`.
+- [x] Hanya order `PENDING` yang dapat dibatalkan.
+- [x] Stok dikembalikan saat cancel.
+- [x] Semua item dikembalikan sesuai quantity.
+- [x] Status berubah menjadi `CANCELLED`.
+- [x] Order `PAID` tidak dapat dibatalkan.
+- [x] Order `CANCELLED` tidak dapat dibatalkan ulang.
+- [x] Order tidak ditemukan menghasilkan `404`.
 
 ## Status transition
 
@@ -814,18 +814,18 @@ Membuat error response konsisten dan tidak menampilkan stack trace.
 
 ## Exception minimal Catalog Service
 
-- [ ] `ProductNotFoundException`
-- [ ] `DuplicateSkuException`
-- [ ] `InsufficientStockException`
-- [ ] `ProductInactiveException`
-- [ ] `InvalidProductStatusException`
+- [x] `ProductNotFoundException`
+- [x] `DuplicateSkuException`
+- [x] `InsufficientStockException`
+- [x] `ProductInactiveException`
+- [x] `InvalidProductStatusException`
 
 ## Exception minimal Order Service
 
-- [ ] `OrderNotFoundException`
-- [ ] `InvalidOrderStatusException`
-- [ ] `CatalogServiceException`
-- [ ] `CatalogServiceUnavailableException`
+- [x] `OrderNotFoundException`
+- [x] `InvalidOrderStatusException`
+- [x] `CatalogServiceException`
+- [x] `CatalogServiceUnavailableException`
 
 ## Global handler
 
@@ -852,15 +852,15 @@ GlobalExceptionHandler
 
 ## Checklist
 
-- [ ] Validation error menghasilkan `400`.
-- [ ] Resource tidak ditemukan menghasilkan `404`.
-- [ ] Conflict SKU menghasilkan `409`.
-- [ ] Invalid status transition menghasilkan `409` atau `400`.
-- [ ] Catalog Service tidak aktif menghasilkan `503`.
-- [ ] Response tidak memiliki stack trace.
-- [ ] Response tidak menampilkan SQL internal.
-- [ ] Response tidak menampilkan nama class Java internal.
-- [ ] Format error Catalog dan Order konsisten.
+- [x] Validation error menghasilkan `400`.
+- [x] Resource tidak ditemukan menghasilkan `404`.
+- [x] Conflict SKU menghasilkan `409`.
+- [x] Invalid status transition menghasilkan `409` atau `400`.
+- [x] Catalog Service tidak aktif menghasilkan `503`.
+- [x] Response tidak memiliki stack trace.
+- [x] Response tidak menampilkan SQL internal.
+- [x] Response tidak menampilkan nama class Java internal.
+- [x] Format error Catalog dan Order konsisten.
 
 ## Output Phase 11
 
@@ -893,18 +893,18 @@ order_items
 
 ## Checklist
 
-- [ ] Primary key terdefinisi.
-- [ ] SKU memiliki unique constraint.
-- [ ] Kolom wajib memiliki `NOT NULL`.
-- [ ] Harga menggunakan tipe decimal/numeric.
-- [ ] Relasi `orders` ke `order_items` benar.
-- [ ] Tidak ada foreign key lintas database.
-- [ ] `order_items.product_id` bukan foreign key ke `catalog_db`.
-- [ ] Enum disimpan sebagai string.
+- [x] Primary key terdefinisi.
+- [x] SKU memiliki unique constraint.
+- [x] Kolom wajib memiliki `NOT NULL`.
+- [x] Harga menggunakan tipe decimal/numeric.
+- [x] Relasi `orders` ke `order_items` benar.
+- [x] Tidak ada foreign key lintas database.
+- [x] `order_items.product_id` bukan foreign key ke `catalog_db`.
+- [x] Enum disimpan sebagai string.
 - [x] DDL Catalog disimpan pada `database/catalog-ddl.sql`.
 - [x] DDL Order disimpan pada `database/order-ddl.sql`.
-- [ ] PDM/ERD disediakan.
-- [ ] Tabel dan kolom memiliki nama yang konsisten.
+- [ ] PDM/ERD disediakan. (Phase 14 — dokumentasi)
+- [x] Tabel dan kolom memiliki nama yang konsisten.
 
 ## Catatan produksi
 
@@ -1003,41 +1003,41 @@ Semua acceptance criteria minimal terpenuhi.
 
 README minimal memuat:
 
-- [ ] Judul project.
-- [ ] Deskripsi singkat.
-- [ ] Arsitektur sistem.
-- [ ] Teknologi.
-- [ ] Struktur folder.
-- [ ] Requirement sistem.
-- [ ] Cara membuat database.
-- [ ] Cara konfigurasi environment.
-- [ ] Cara menjalankan Catalog Service.
-- [ ] Cara menjalankan Order Service.
-- [ ] Daftar endpoint Catalog.
-- [ ] Daftar endpoint Order.
-- [ ] Contoh request dan response.
-- [ ] Business rules.
-- [ ] Penjelasan database terpisah.
-- [ ] Penjelasan komunikasi HTTP.
-- [ ] Cara import Postman Collection.
-- [ ] Daftar bonus yang dikerjakan.
+- [x] Judul project.
+- [x] Deskripsi singkat.
+- [x] Arsitektur sistem.
+- [x] Teknologi.
+- [x] Struktur folder.
+- [x] Requirement sistem.
+- [x] Cara membuat database.
+- [x] Cara konfigurasi environment.
+- [x] Cara menjalankan Catalog Service.
+- [x] Cara menjalankan Order Service.
+- [x] Daftar endpoint Catalog.
+- [x] Daftar endpoint Order.
+- [x] Contoh request dan response.
+- [x] Business rules.
+- [x] Penjelasan database terpisah.
+- [x] Penjelasan komunikasi HTTP.
+- [x] Cara import Postman Collection.
+- [x] Daftar bonus yang dikerjakan.
 
 ## 14.2 Postman Collection
 
-- [ ] Create product.
-- [ ] Get all products.
-- [ ] Get product detail.
-- [ ] Update stock.
-- [ ] Update status.
-- [ ] Create order.
-- [ ] Get all orders.
-- [ ] Get order detail.
-- [ ] Pay order.
-- [ ] Cancel order.
-- [ ] Request valid.
-- [ ] Request invalid.
-- [ ] Environment variable `catalog_base_url`.
-- [ ] Environment variable `order_base_url`.
+- [x] Create product.
+- [x] Get all products.
+- [x] Get product detail.
+- [x] Update stock.
+- [x] Update status.
+- [x] Create order.
+- [x] Get all orders.
+- [x] Get order detail.
+- [x] Pay order.
+- [x] Cancel order.
+- [x] Request valid.
+- [x] Request invalid.
+- [x] Environment variable `catalog_base_url`.
+- [x] Environment variable `order_base_url`.
 
 ## 14.3 PDM/DDL
 
@@ -1049,7 +1049,7 @@ README minimal memuat:
 
 ## 14.4 AI_USAGE.md
 
-Setiap penggunaan AI dicatat.
+- [x] Setiap penggunaan AI dicatat.
 
 Format contoh:
 
@@ -1106,31 +1106,31 @@ Merapikan kualitas kode sebelum mengerjakan bonus.
 
 ## Checklist struktur kode
 
-- [ ] Controller hanya menangani HTTP.
-- [ ] Business logic berada di service.
-- [ ] Repository hanya menangani akses data.
-- [ ] Entity tidak dikembalikan langsung sebagai response.
-- [ ] DTO request dan response terpisah.
-- [ ] Penamaan class dan method konsisten.
-- [ ] Tidak ada kode duplikat yang berlebihan.
-- [ ] Constructor injection digunakan.
-- [ ] Tidak ada field injection jika dapat dihindari.
-- [ ] Tidak ada hardcoded base URL.
-- [ ] Tidak ada hardcoded password pada repository.
-- [ ] Tidak ada unused import.
-- [ ] Tidak ada komentar yang menyesatkan.
-- [ ] Seluruh endpoint telah diuji ulang.
+- [x] Controller hanya menangani HTTP.
+- [x] Business logic berada di service.
+- [x] Repository hanya menangani akses data.
+- [x] Entity tidak dikembalikan langsung sebagai response.
+- [x] DTO request dan response terpisah.
+- [x] Penamaan class dan method konsisten.
+- [x] Tidak ada kode duplikat yang berlebihan.
+- [x] Constructor injection digunakan.
+- [x] Tidak ada field injection jika dapat dihindari.
+- [x] Tidak ada hardcoded base URL.
+- [x] Tidak ada hardcoded password pada repository.
+- [x] Tidak ada unused import.
+- [x] Tidak ada komentar yang menyesatkan.
+- [ ] Seluruh endpoint telah diuji ulang. (jalankan Postman collection)
 
 ## Checklist business logic
 
-- [ ] Harga menggunakan `BigDecimal`.
-- [ ] Total dihitung backend.
-- [ ] Stok tidak pernah negatif.
-- [ ] Produk INACTIVE tidak dapat dipesan.
-- [ ] Hanya PENDING dapat dibayar.
-- [ ] Hanya PENDING dapat dibatalkan.
-- [ ] Cancel mengembalikan stok.
-- [ ] Snapshot produk tidak berubah ketika produk diperbarui.
+- [x] Harga menggunakan `BigDecimal`.
+- [x] Total dihitung backend.
+- [x] Stok tidak pernah negatif.
+- [x] Produk INACTIVE tidak dapat dipesan.
+- [x] Hanya PENDING dapat dibayar.
+- [x] Hanya PENDING dapat dibatalkan.
+- [x] Cancel mengembalikan stok.
+- [x] Snapshot produk tidak berubah ketika produk diperbarui.
 
 ## Output Phase 15
 
@@ -1154,13 +1154,13 @@ GET /api/products?status=ACTIVE
 
 ## Checklist
 
-- [ ] Pagination product.
-- [ ] Search berdasarkan nama.
-- [ ] Search berdasarkan SKU.
-- [ ] Filter berdasarkan status.
-- [ ] Sorting berdasarkan nama.
-- [ ] Sorting berdasarkan harga.
-- [ ] Response pagination konsisten.
+- [x] Pagination product.
+- [x] Search berdasarkan nama.
+- [x] Search berdasarkan SKU.
+- [x] Filter berdasarkan status.
+- [x] Sorting berdasarkan nama.
+- [x] Sorting berdasarkan harga.
+- [x] Response pagination konsisten.
 
 ## Order Service
 
@@ -1173,10 +1173,10 @@ GET /api/orders?customerEmail=...
 
 ## Checklist
 
-- [ ] Filter order berdasarkan status.
-- [ ] Filter order berdasarkan email.
-- [ ] Pagination order.
-- [ ] Sorting berdasarkan waktu dibuat.
+- [x] Filter order berdasarkan status.
+- [x] Filter order berdasarkan email.
+- [x] Pagination order.
+- [x] Sorting berdasarkan waktu dibuat.
 
 ## Output Bonus 1
 
@@ -1192,14 +1192,14 @@ Menyediakan dokumentasi API interaktif.
 
 ## Checklist
 
-- [ ] Menambahkan dependency Springdoc OpenAPI.
-- [ ] Swagger UI Catalog Service dapat dibuka.
-- [ ] Swagger UI Order Service dapat dibuka.
-- [ ] Setiap endpoint memiliki deskripsi.
-- [ ] Request body terdokumentasi.
-- [ ] Response berhasil terdokumentasi.
-- [ ] Response error terdokumentasi.
-- [ ] Enum status terdokumentasi.
+- [x] Menambahkan dependency Springdoc OpenAPI.
+- [x] Swagger UI Catalog Service dapat dibuka.
+- [x] Swagger UI Order Service dapat dibuka.
+- [x] Setiap endpoint memiliki deskripsi.
+- [x] Request body terdokumentasi.
+- [x] Response berhasil terdokumentasi.
+- [x] Response error terdokumentasi.
+- [x] Enum status terdokumentasi.
 
 ## Contoh URL
 
