@@ -2,7 +2,7 @@
 
 Dokumen ini mencatat penggunaan AI selama pengerjaan proyek Mini Commerce Kampus.
 
-**Tool AI yang digunakan:** Claude (Anthropic) via Claude Code
+**Tool AI yang digunakan:** Claude 
 
 ---
 
@@ -16,7 +16,7 @@ Memahami arsitektur microservices dan merencanakan struktur proyek
 
 ### Prompt
 ```
-Saya membuat tugas backend microservices Spring Boot dengan dua service: Catalog Service dan Order Service. Bantu saya merencanakan struktur folder, endpoint yang dibutuhkan, dan aturan komunikasi antar service.
+Saya akan membuat backend microservices Spring Boot dengan dua service: Catalog Service dan Order Service. Bantu saya merencanakan struktur folder, endpoint yang dibutuhkan, aturan komunikasi antar service dan langkah-langkah yang harus dilakukan.
 ```
 
 ### Hasil yang Digunakan
@@ -24,13 +24,14 @@ Saya membuat tugas backend microservices Spring Boot dengan dua service: Catalog
 - Daftar endpoint wajib untuk Catalog dan Order Service
 - Aturan bahwa Order Service tidak boleh query langsung ke catalog_db
 - Konsep snapshot nama dan harga produk di order_items
+- Langkah-langkah membuat microservices
 
 ### Modifikasi
 - Menyesuaikan nama package dengan konvensi proyek (`com.campus_commerce`)
 - Menambahkan endpoint internal `/reduce-stock` dan `/restore-stock` di Catalog Service
 
 ### Pemahaman
-Saya memahami bahwa pemisahan database adalah inti dari arsitektur microservices. Order Service harus memanggil Catalog Service melalui HTTP untuk mendapatkan data produk, bukan mengakses database catalog secara langsung. Ini memastikan setiap service dapat di-deploy dan di-scale secara independen.
+Saya memahami bahwa pemisahan database adalah inti dari arsitektur microservices. Order Service harus memanggil Catalog Service melalui HTTP untuk mendapatkan data produk, bukan mengakses database catalog secara langsung. Ini memastikan setiap service dapat di-deploy dan di-scale secara independen. Dan saya menjadi tahi bagaimana cara membuat microservices dari awal sampai bisa di jalankan.
 
 ---
 
@@ -116,7 +117,7 @@ Saya membuat Order Service yang perlu memanggil Catalog Service menggunakan Spri
 - Membuat `RestClientConfig` terpisah sebagai Spring `@Configuration` bean
 
 ### Pemahaman
-Saya memahami bahwa `RestClient` adalah pengganti `RestTemplate` di Spring 6.1+. Method `onStatus()` memungkinkan kita menghandle respons HTTP tertentu sebelum body diparse. Penting untuk membedakan error dari service (4xx/5xx) dengan service yang tidak bisa dihubungi sama sekali (connection refused/timeout), karena keduanya membutuhkan response yang berbeda ke client.
+Saya memahami bahwa `RestClient` dengan method `onStatus()` memungkinkan kita menghandle respons HTTP tertentu sebelum body diparse. Penting untuk membedakan error dari service (4xx/5xx) dengan service yang tidak bisa dihubungi sama sekali (connection refused/timeout), karena keduanya membutuhkan response yang berbeda ke client.
 
 ---
 
@@ -318,7 +319,7 @@ Bagaimana cara membuat Dockerfile untuk aplikasi Spring Boot menggunakan multi-s
 - Menggunakan named volumes agar data PostgreSQL persisten antar restart
 
 ### Pemahaman
-Saya memahami pentingnya urutan startup dalam Docker Compose. `depends_on` dengan `service_healthy` memastikan PostgreSQL benar-benar siap menerima koneksi sebelum Spring Boot mencoba connect. Multi-stage build memisahkan build tools dari runtime image, menghasilkan image yang lebih kecil dan lebih aman.
+Saya memahami pentingnya urutan startup dalam Docker Compose. `depends_on` dengan `service_healthy` memastikan PostgreSQL benar-benar siap menerima koneksi sebelum Spring Boot mencoba connect. Multi-stage build memisahkan build tools dari runtime image, menghasilkan image yang lebih kecil dan lebih aman. Akan tetapi masih perlu dipelajari lebih lanjut untuk lebih memahami.
 
 ---
 
@@ -394,10 +395,12 @@ Saya memahami bahwa Spring Cloud Gateway berbasis WebFlux (reactive, non-blockin
 - Unit test tanpa Spring context menggunakan `@ExtendWith(MockitoExtension.class)`
 - Integration test dengan H2 in-memory dan `@MockBean` untuk dependency eksternal
 - Multi-stage Docker build dan orkestrasi dengan Docker Compose + health checks
-- Idempotency via header HTTP: simpan key→id di database, check sebelum proses
-- API Gateway dengan Spring Cloud Gateway: routing, CORS reaktif, global logging filter
 
 ## Bagian yang Masih Perlu Dipelajari
 
+- Untuk Structured logging sudah berhasil di implementasi, akan tetapi masih perlu mempelajari lagi agar benar-benar paham
+- Berhasil mengimplementasi H2 untuk integration testing, akan tetapi masih belum paham cara kerja nya seperti apa
 - Penanganan race condition pada pengurangan stok secara concurrent (Saga Pattern atau Optimistic Locking)
 - Distributed tracing untuk melacak request yang melewati multiple service (Zipkin/OpenTelemetry)
+- Idempotency via header HTTP: simpan key→id di database, check sebelum proses
+- API Gateway dengan Spring Cloud Gateway: routing, CORS reaktif, global logging filter

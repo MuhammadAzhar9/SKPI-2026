@@ -2,6 +2,10 @@
 
 Backend sistem e-commerce kampus berbasis microservices menggunakan Spring Boot.
 
+SKPI BackEnd Java Springboot
+
+Muhammad Azharuddin Hamid
+221524018
 ---
 
 ## Deskripsi
@@ -72,40 +76,49 @@ Client / Postman
 ## Struktur Folder
 
 ```
-BACKEND/
+221524018_Muhammad Azharuddin Hamid_SKPI2026-BE/
 ├── campus_commerce/
 │   ├── catalog/                    ← Catalog Service (port 8081)
-│   │   └── src/main/java/.../catalog/
-│   │       ├── controller/
-│   │       ├── dto/request/ & response/
-│   │       ├── exception/
-│   │       ├── model/entity/ & enums/
-│   │       ├── repository/
-│   │       └── service/ & service/impl/
-│   ├── order/                      ← Order Service (port 8082)
-│   │   └── src/main/java/.../order/
-│   │       ├── client/ & client/dto/
+│   │   └── src/main/java/com/campus_commerce/catalog/
 │   │       ├── config/
 │   │       ├── controller/
-│   │       ├── dto/request/ & response/
+│   │       ├── dto/
+│   │       │   ├── request/
+│   │       │   └── response/
 │   │       ├── exception/
-│   │       ├── model/entity/ & enums/
+│   │       ├── model/
+│   │       │   ├── entity/
+│   │       │   └── enums/
 │   │       ├── repository/
-│   │       └── service/ & service/impl/
+│   │       └── service/
+│   │           └── impl/
+│   ├── order/                      ← Order Service (port 8082)
+│   │   └── src/main/java/com/campus_commerce/order/
+│   │       ├── client/
+│   │       │   └── dto/
+│   │       ├── config/
+│   │       ├── controller/
+│   │       ├── dto/
+│   │       │   ├── request/
+│   │       │   └── response/
+│   │       ├── exception/
+│   │       ├── mapper/
+│   │       ├── model/
+│   │       │   ├── entity/
+│   │       │   └── enums/
+│   │       ├── repository/
+│   │       └── service/
+│   │           └── impl/
 │   ├── gateway/                    ← API Gateway (port 8080)
-│   │   └── src/main/java/.../gateway/
+│   │   └── src/main/java/com/campus_commerce/gateway/
 │   │       ├── config/
 │   │       └── filter/
-│   └── postman/
-│       └── campus-commerce.postman_collection.json
+│   └── docker-compose.yml
 ├── database/
 │   ├── catalog-ddl.sql
 │   └── order-ddl.sql
-├── docs/
-│   ├── PROJECT_ROADMAP_CAMPUS_COMMERCE.md
-│   ├── IDEMPOTENCY.md
-│   └── SPESIFIKASI_TUGAS_MINI_COMMERCE_KAMPUS.md
-├── docker-compose.yml
+├── postman/
+│   └── campus-commerce.postman_collection.json
 ├── README.md
 └── AI_USAGE.md
 ```
@@ -463,7 +476,7 @@ Base URL Catalog Service dikonfigurasi melalui `catalog.service.base-url` di `ap
 
 1. Buka Postman
 2. Klik **Import**
-3. Pilih file `campus_commerce/postman/campus-commerce.postman_collection.json`
+3. Pilih file `postman/campus-commerce.postman_collection.json`
 4. Collection variables `catalog_base_url` dan `order_base_url` sudah dikonfigurasi otomatis
 5. Jalankan request dari atas ke bawah, atau gunakan **Collection Runner**
 
