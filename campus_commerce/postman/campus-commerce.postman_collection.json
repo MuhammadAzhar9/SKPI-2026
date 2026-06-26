@@ -1,16 +1,18 @@
 {
     "info": {
         "name": "Campus Commerce",
-        "_postman_id": "campus-commerce-collection-v1",
-        "description": "Collection testing Campus Commerce Microservices.\n\nPastikan sebelum run:\n- Catalog Service berjalan di port 8081\n- Order Service berjalan di port 8082\n- Database catalog_db dan order_db sudah bersih\n\nJalankan semua request dari atas ke bawah secara berurutan.",
+        "_postman_id": "campus-commerce-collection-v2",
+        "description": "Collection testing Campus Commerce Microservices.\n\nPastikan sebelum run:\n- Catalog Service berjalan di port 8081\n- Order Service berjalan di port 8082\n- Gateway Service berjalan di port 8080 (opsional, untuk folder Via API Gateway)\n- Database catalog_db dan order_db sudah bersih\n\nJalankan semua request dari atas ke bawah secara berurutan.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
-        { "key": "catalog_base_url",  "value": "http://localhost:8081", "type": "string" },
-        { "key": "order_base_url",    "value": "http://localhost:8082", "type": "string" },
-        { "key": "product_id",        "value": "", "type": "string" },
-        { "key": "order_id",          "value": "", "type": "string" },
-        { "key": "order_id_cancel",   "value": "", "type": "string" }
+        { "key": "catalog_base_url",       "value": "http://localhost:8081", "type": "string" },
+        { "key": "order_base_url",         "value": "http://localhost:8082", "type": "string" },
+        { "key": "gateway_base_url",       "value": "http://localhost:8080", "type": "string" },
+        { "key": "product_id",             "value": "", "type": "string" },
+        { "key": "order_id",               "value": "", "type": "string" },
+        { "key": "order_id_cancel",        "value": "", "type": "string" },
+        { "key": "idempotency_order_id",   "value": "", "type": "string" }
     ],
     "item": [
         {
@@ -488,6 +490,269 @@
                         "method": "GET",
                         "header": [],
                         "url": { "raw": "{{catalog_base_url}}/api/products/3", "host": ["{{catalog_base_url}}"], "path": ["api", "products", "3"] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pagination & Filter",
+            "description": "Menguji fitur pagination dan filter pada Catalog Service dan Order Service (Phase 16).",
+            "item": [
+                {
+                    "name": "01 - Filter Produk by Name 'nasi' [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Hanya produk dengan nama mengandung nasi', () => {",
+                        "    const content = pm.response.json().content;",
+                        "    pm.expect(content.length).to.be.at.least(1);",
+                        "    content.forEach(p => pm.expect(p.name.toLowerCase()).to.include('nasi'));",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{catalog_base_url}}/api/products?name=nasi",
+                            "host": ["{{catalog_base_url}}"],
+                            "path": ["api", "products"],
+                            "query": [{ "key": "name", "value": "nasi" }]
+                        }
+                    }
+                },
+                {
+                    "name": "02 - Filter Produk by Status ACTIVE [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Semua produk berstatus ACTIVE', () => {",
+                        "    const content = pm.response.json().content;",
+                        "    pm.expect(content.length).to.be.at.least(1);",
+                        "    content.forEach(p => pm.expect(p.status).to.eql('ACTIVE'));",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{catalog_base_url}}/api/products?status=ACTIVE",
+                            "host": ["{{catalog_base_url}}"],
+                            "path": ["api", "products"],
+                            "query": [{ "key": "status", "value": "ACTIVE" }]
+                        }
+                    }
+                },
+                {
+                    "name": "03 - Pagination Produk size=2 page=0 [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Maksimal 2 item per halaman', () => {",
+                        "    const json = pm.response.json();",
+                        "    pm.expect(json.content.length).to.be.at.most(2);",
+                        "    pm.expect(json.size).to.eql(2);",
+                        "    pm.expect(json.totalElements).to.eql(3);",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{catalog_base_url}}/api/products?page=0&size=2",
+                            "host": ["{{catalog_base_url}}"],
+                            "path": ["api", "products"],
+                            "query": [
+                                { "key": "page", "value": "0" },
+                                { "key": "size", "value": "2" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "04 - Filter Order by Status PAID [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Semua order berstatus PAID', () => {",
+                        "    const content = pm.response.json().content;",
+                        "    pm.expect(content.length).to.be.at.least(1);",
+                        "    content.forEach(o => pm.expect(o.status).to.eql('PAID'));",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{order_base_url}}/api/orders?status=PAID",
+                            "host": ["{{order_base_url}}"],
+                            "path": ["api", "orders"],
+                            "query": [{ "key": "status", "value": "PAID" }]
+                        }
+                    }
+                },
+                {
+                    "name": "05 - Filter Order by customerName 'Siti' [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Ada hasil filter customer Siti', () => {",
+                        "    const content = pm.response.json().content;",
+                        "    pm.expect(content.length).to.be.at.least(1);",
+                        "    content.forEach(o => pm.expect(o.customerName.toLowerCase()).to.include('siti'));",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{order_base_url}}/api/orders?customerName=Siti",
+                            "host": ["{{order_base_url}}"],
+                            "path": ["api", "orders"],
+                            "query": [{ "key": "customerName", "value": "Siti" }]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Idempotency",
+            "description": "Menguji fitur Idempotency-Key pada POST /api/orders (Phase 22). Kirim request yang sama dua kali — order hanya dibuat sekali dan stok hanya berkurang sekali.",
+            "item": [
+                {
+                    "name": "01 - Get Stok PROD-002 Sebelum Idempotency Test",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Simpan stok awal PROD-002', () => {",
+                        "    pm.collectionVariables.set('prod002_stock_before', pm.response.json().stock);",
+                        "    console.log('Stok PROD-002 sebelum:', pm.response.json().stock);",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": { "raw": "{{catalog_base_url}}/api/products/2", "host": ["{{catalog_base_url}}"], "path": ["api", "products", "2"] }
+                    }
+                },
+                {
+                    "name": "02 - Create Order dengan Idempotency-Key [201]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 201 Created (order baru dibuat)', () => pm.response.to.have.status(201));",
+                        "pm.test('Simpan order_id dari idempotency test', () => {",
+                        "    pm.collectionVariables.set('idempotency_order_id', pm.response.json().id);",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Idempotency-Key", "value": "ujikom-test-key-2026" }
+                        ],
+                        "body": { "mode": "raw", "raw": "{\n    \"customerName\": \"Dewi Lestari\",\n    \"customerEmail\": \"dewi@example.com\",\n    \"items\": [\n        { \"productId\": 2, \"quantity\": 1 }\n    ]\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{order_base_url}}/api/orders", "host": ["{{order_base_url}}"], "path": ["api", "orders"] }
+                    }
+                },
+                {
+                    "name": "03 - Retry dengan Idempotency-Key SAMA [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK (bukan 201 — order sudah ada)', () => pm.response.to.have.status(200));",
+                        "pm.test('Order ID sama dengan request pertama', () => {",
+                        "    pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('idempotency_order_id'));",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Idempotency-Key", "value": "ujikom-test-key-2026" }
+                        ],
+                        "body": { "mode": "raw", "raw": "{\n    \"customerName\": \"Dewi Lestari\",\n    \"customerEmail\": \"dewi@example.com\",\n    \"items\": [\n        { \"productId\": 2, \"quantity\": 1 }\n    ]\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{order_base_url}}/api/orders", "host": ["{{order_base_url}}"], "path": ["api", "orders"] }
+                    }
+                },
+                {
+                    "name": "04 - Verify: Stok PROD-002 Hanya Berkurang 1x",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                        "pm.test('Stok berkurang hanya 1 (bukan 2) karena idempotency', () => {",
+                        "    const stockBefore = parseInt(pm.collectionVariables.get('prod002_stock_before'));",
+                        "    const stockAfter = pm.response.json().stock;",
+                        "    pm.expect(stockAfter).to.eql(stockBefore - 1);",
+                        "    console.log('Stok sebelum:', stockBefore, '| Stok setelah:', stockAfter);",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": { "raw": "{{catalog_base_url}}/api/products/2", "host": ["{{catalog_base_url}}"], "path": ["api", "products", "2"] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Via API Gateway",
+            "description": "Menguji routing melalui API Gateway di port 8080 (Phase 23). Pastikan Gateway Service berjalan. Semua request diteruskan ke service yang tepat secara otomatis.",
+            "item": [
+                {
+                    "name": "01 - [GW] Get All Products via Gateway [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK — Gateway berhasil forward ke Catalog Service', () => pm.response.to.have.status(200));",
+                        "pm.test('Response berformat pagination', () => {",
+                        "    const json = pm.response.json();",
+                        "    pm.expect(json).to.have.property('content');",
+                        "    pm.expect(json).to.have.property('totalElements');",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": { "raw": "{{gateway_base_url}}/api/products", "host": ["{{gateway_base_url}}"], "path": ["api", "products"] }
+                    }
+                },
+                {
+                    "name": "02 - [GW] Get All Orders via Gateway [200]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 200 OK — Gateway berhasil forward ke Order Service', () => pm.response.to.have.status(200));",
+                        "pm.test('Response berformat pagination', () => {",
+                        "    const json = pm.response.json();",
+                        "    pm.expect(json).to.have.property('content');",
+                        "    pm.expect(json).to.have.property('totalElements');",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": { "raw": "{{gateway_base_url}}/api/orders", "host": ["{{gateway_base_url}}"], "path": ["api", "orders"] }
+                    }
+                },
+                {
+                    "name": "03 - [GW] Create Product via Gateway [201]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 201 Created — Gateway berhasil POST ke Catalog Service', () => pm.response.to.have.status(201));",
+                        "pm.test('Produk tersimpan dengan status ACTIVE', () => {",
+                        "    pm.expect(pm.response.json().status).to.eql('ACTIVE');",
+                        "    pm.expect(pm.response.json().sku).to.eql('PROD-GW');",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "POST",
+                        "header": [{ "key": "Content-Type", "value": "application/json" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"sku\": \"PROD-GW\",\n    \"name\": \"Produk via Gateway\",\n    \"price\": 8000,\n    \"stock\": 20\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{gateway_base_url}}/api/products", "host": ["{{gateway_base_url}}"], "path": ["api", "products"] }
+                    }
+                },
+                {
+                    "name": "04 - [GW] Create Order via Gateway dengan Idempotency-Key [201]",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+                        "pm.test('Status 201 Created — Gateway berhasil POST ke Order Service', () => pm.response.to.have.status(201));",
+                        "pm.test('Order berstatus PENDING dan snapshot tersimpan', () => {",
+                        "    const json = pm.response.json();",
+                        "    pm.expect(json.status).to.eql('PENDING');",
+                        "    pm.expect(json.items[0].productName).to.be.a('string');",
+                        "});"
+                    ]}}],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Idempotency-Key", "value": "gateway-order-key-2026" }
+                        ],
+                        "body": { "mode": "raw", "raw": "{\n    \"customerName\": \"Rizki Pratama\",\n    \"customerEmail\": \"rizki@example.com\",\n    \"items\": [\n        { \"productId\": 1, \"quantity\": 1 }\n    ]\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{gateway_base_url}}/api/orders", "host": ["{{gateway_base_url}}"], "path": ["api", "orders"] }
                     }
                 }
             ]
