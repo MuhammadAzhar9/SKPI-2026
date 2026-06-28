@@ -36,7 +36,7 @@ services:
 
   catalog-service:
     build:
-      context: ./campus_commerce/catalog
+      context: ./catalog
       dockerfile: Dockerfile
     container_name: catalog-service
     environment:
@@ -60,7 +60,7 @@ services:
 
   order-service:
     build:
-      context: ./campus_commerce/order
+      context: ./order
       dockerfile: Dockerfile
     container_name: order-service
     environment:
@@ -87,7 +87,7 @@ services:
 
   gateway-service:
     build:
-      context: ./campus_commerce/gateway
+      context: ./gateway
       dockerfile: Dockerfile
     container_name: gateway-service
     environment:

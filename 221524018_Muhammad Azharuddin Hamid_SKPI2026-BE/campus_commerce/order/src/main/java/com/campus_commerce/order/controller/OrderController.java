@@ -53,7 +53,7 @@ public class OrderController {
         if (idempotencyKey != null && !idempotencyKey.isBlank()) {
             Optional<Long> existingOrderId = idempotencyService.findOrderId(idempotencyKey);
             if (existingOrderId.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED)
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(orderService.getOrderById(existingOrderId.get()));
             }
         }
@@ -77,8 +77,10 @@ public class OrderController {
             @RequestParam(required = false) OrderStatus status,
             @Parameter(description = "Filter berdasarkan email customer (partial match)")
             @RequestParam(required = false) String customerEmail,
+            @Parameter(description = "Filter berdasarkan nama customer (partial match)")
+            @RequestParam(required = false) String customerName,
             @ParameterObject @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(orderService.getOrders(status, customerEmail, pageable));
+        return ResponseEntity.ok(orderService.getOrders(status, customerEmail, customerName, pageable));
     }
 
     @GetMapping("/{id}")

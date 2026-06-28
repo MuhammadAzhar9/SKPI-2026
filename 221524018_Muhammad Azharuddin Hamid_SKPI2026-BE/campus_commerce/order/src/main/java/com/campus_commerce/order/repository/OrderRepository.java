@@ -10,4 +10,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
     Page<Order> findByCustomerEmailContainingIgnoreCase(String email, Pageable pageable);
     Page<Order> findByStatusAndCustomerEmailContainingIgnoreCase(OrderStatus status, String email, Pageable pageable);
+    Page<Order> findByCustomerNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Order> findByStatusAndCustomerNameContainingIgnoreCase(OrderStatus status, String name, Pageable pageable);
 }

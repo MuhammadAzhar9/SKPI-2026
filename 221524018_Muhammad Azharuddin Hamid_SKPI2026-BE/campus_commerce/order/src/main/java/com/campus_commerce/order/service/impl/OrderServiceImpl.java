@@ -102,16 +102,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public PagedResponse<OrderResponse> getOrders(OrderStatus status, String customerEmail, Pageable pageable) {
+    public PagedResponse<OrderResponse> getOrders(OrderStatus status, String customerEmail, String customerName, Pageable pageable) {
         Page<Order> page;
 
         boolean hasStatus = status != null;
         boolean hasEmail = customerEmail != null && !customerEmail.isBlank();
+        boolean hasName = customerName != null && !customerName.isBlank();
 
-        if (hasStatus && hasEmail) {
+        if (hasStatus && hasName) {
+            page = orderRepository.findByStatusAndCustomerNameContainingIgnoreCase(status, customerName, pageable);
+        } else if (hasStatus && hasEmail) {
             page = orderRepository.findByStatusAndCustomerEmailContainingIgnoreCase(status, customerEmail, pageable);
         } else if (hasStatus) {
             page = orderRepository.findByStatus(status, pageable);
+        } else if (hasName) {
+            page = orderRepository.findByCustomerNameContainingIgnoreCase(customerName, pageable);
         } else if (hasEmail) {
             page = orderRepository.findByCustomerEmailContainingIgnoreCase(customerEmail, pageable);
         } else {
